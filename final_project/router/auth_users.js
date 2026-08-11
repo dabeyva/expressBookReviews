@@ -48,10 +48,32 @@ regd_users.post("/login", (req, res) => {
   }
 });
 
-// Add a book review (Tarea 8 - la haremos a continuación)
+
+
+// Add or modify a book review (Tarea 8)
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  return res.status(300).json({ message: "Yet to be implemented" });
-});
+    const isbn = req.params.isbn;
+    const review = req.query.review;
+    const username = req.session.authorization ? req.session.authorization.username : null;
+  
+    if (!username) {
+      return res.status(403).json({ message: "Usuario no autenticado" });
+    }
+  
+    if (!review) {
+      return res.status(400).json({ message: "Por favor proporciona una reseña" });
+    }
+  
+    if (books[isbn]) {
+      // Agrega o actualiza la reseña usando el 'username' como clave
+      books[isbn].reviews[username] = review;
+      return res.status(200).json({ 
+        message: `La reseña para el libro con ISBN ${isbn} ha sido agregada/actualizada con éxito.` 
+      });
+    } else {
+      return res.status(404).json({ message: "Libro no encontrado" });
+    }
+  });
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
