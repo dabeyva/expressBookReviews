@@ -5,10 +5,26 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
 
-public_users.post("/register", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
+// Register a new user
+public_users.post("/register", (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+  
+    // 1. Validar que se enviaron ambos campos
+    if (!username || !password) {
+      return res.status(404).json({ message: "Se requiere nombre de usuario y contraseña." });
+    }
+  
+    // 2. Verificar si el usuario ya existe
+    if (isValid(username)) {
+      return res.status(404).json({ message: "El usuario ya existe." });
+    }
+  
+    // 3. Registrar el nuevo usuario en el arreglo global 'users'
+    users.push({ "username": username, "password": password });
+    return res.status(200).json({ message: "Usuario registrado con éxito. Ahora puedes iniciar sesión." });
+  });
+
 
 // Get the book list available in the shop
 public_users.get('/', function (req, res) {
@@ -62,7 +78,6 @@ public_users.get('/title/:title', function (req, res) {
       return res.status(404).json({ message: "No se encontraron libros con este título" });
     }
   });
-
 
 
 // Get book review
