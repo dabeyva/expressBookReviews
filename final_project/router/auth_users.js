@@ -98,7 +98,7 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     } else {
       return res.status(404).json({ message: "Libro no encontrado" });
     }
-  });
+  });     
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
