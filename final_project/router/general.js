@@ -94,23 +94,34 @@ public_users.get('/author/:author', function (req, res) {
       });
   });
 
-// Get all books based on title
+// Get all books based on title using Promises (Tarea 13)
 public_users.get('/title/:title', function (req, res) {
     const titleParam = req.params.title.toLowerCase();
-    const keys = Object.keys(books);
-    let matchingBooks = [];
   
-    keys.forEach(key => {
-      if (books[key].title.toLowerCase() === titleParam) {
-        matchingBooks.push(books[key]);
+    const getBooksByTitle = new Promise((resolve, reject) => {
+      const keys = Object.keys(books);
+      let matchingBooks = [];
+  
+      keys.forEach(key => {
+        if (books[key].title.toLowerCase() === titleParam) {
+          matchingBooks.push(books[key]);
+        } 
+      });
+  
+      if (matchingBooks.length > 0) {
+        resolve(matchingBooks);
+      } else {
+        reject("No se encontraron libros con este título");
       }
     });
   
-    if (matchingBooks.length > 0) {
-      return res.status(200).send(JSON.stringify(matchingBooks, null, 4));
-    } else {
-      return res.status(404).json({ message: "No se encontraron libros con este título" });
-    }
+    getBooksByTitle
+      .then((bookList) => {
+        return res.status(200).send(JSON.stringify(bookList, null, 4));
+      })
+      .catch((error) => {
+        return res.status(404).json({ message: error });
+      });
   });
 
 
