@@ -75,6 +75,31 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     }
   });
 
+// Delete a book review (Tarea 9)
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    const isbn = req.params.isbn;
+    const username = req.session.authorization ? req.session.authorization.username : null;
+  
+    if (!username) {
+      return res.status(403).json({ message: "Usuario no autenticado" });
+    }
+  
+    if (books[isbn]) {
+      let bookReviews = books[isbn].reviews;
+  
+      if (bookReviews[username]) {
+        delete bookReviews[username];
+        return res.status(200).json({ 
+          message: `La reseña del usuario ${username} para el libro con ISBN ${isbn} ha sido eliminada.` 
+        });
+      } else {
+        return res.status(404).json({ message: "No se encontró una reseña de este usuario para el libro especificado." });
+      }
+    } else {
+      return res.status(404).json({ message: "Libro no encontrado" });
+    }
+  });
+
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
 module.exports.users = users;
