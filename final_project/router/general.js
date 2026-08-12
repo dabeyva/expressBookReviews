@@ -113,7 +113,7 @@ public_users.get('/title/:title', function (req, res) {
       } else {
         reject("No se encontraron libros con este título");
       }
-    });
+    });   
   
     getBooksByTitle
       .then((bookList) => {
